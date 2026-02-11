@@ -11,7 +11,7 @@ services:
 
       SQLITE_PATH: "/data/db.sqlite3"
       DJANGO_SECRET_KEY_FILE: "/data/django_secret_key"
-
+      API_KEY: "${API_KEY}"
       EXTERNAL_API_BASE_URL: "${EXTERNAL_API_BASE_URL}"
       EXTERNAL_API_TIMEOUT_SECONDS: "${EXTERNAL_API_TIMEOUT_SECONDS:-5}"
       CACHE_TTL_SECONDS: "${CACHE_TTL_SECONDS:-3600}"
