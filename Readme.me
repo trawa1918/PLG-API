@@ -1,27 +1,60 @@
-# PLG-API — Read-only Django REST API (BIG PostgreSQL DB)
+# PLG-API — Django REST API (SQLite + BIG PostgreSQL)
 
-This project exposes a **read-only** Django REST API endpoint that queries a **large PostgreSQL database** (on the same server) and returns records **only when filtered by** `external_player_id`.
+This project provides **read-only** endpoints using Django REST Framework that:
+- use **SQLite** as a small local database (for app data/cache),
+- also connect to a **large PostgreSQL database** (alias `big`) within the same private network,
+- fetch data from the BIG DB by **`bohemia_id`** and can store/update selected fields in SQLite.
 
-The API is intentionally restricted to **GET** requests (no create/update/delete).
+The API is intentionally limited to **GET** requests (no create/update/delete on the BIG DB).
 
 ---
 
 ## Features
 
 - Django + Django REST Framework
-- Connects to a separate PostgreSQL database alias (e.g. `big`)
-- Unmanaged models (`managed = False`) so Django does **not** migrate the BIG database
-- Read-only endpoint
-- **Required** query parameter: `external_player_id` (exact match)
+- Two databases:
+  - `default` → SQLite (`db.sqlite3`)
+  - `big` → PostgreSQL (read-only user recommended)
+- BIG DB models are **not migrated** (`managed = False`) — Django won’t modify the big database schema
+- Integration via **`bohemia_id`**
+- Optional caching/persisting of selected BIG DB fields into SQLite
 
 ---
 
 ## Requirements
 
 - Python 3.14+
-- PostgreSQL reachable from the app server
-- A PostgreSQL **read-only** user for the BIG database is strongly recommended
+- PostgreSQL reachable from the API host/container (same private network; firewall allows only the API host)
+- A PostgreSQL **read-only** user for the BIG DB is strongly recommended
 
 ---
 
-## Setup (virtualenv + pip)
+## Run (Docker Compose)
+
+1. Fill in the `.env` file (BIG DB credentials + API port).
+2. Start:
+   ```bash
+   docker compose up --build
+   ```
+3. The API listens on port `9600` by default (controlled by `API_PORT` in `.env`).
+
+---
+
+## Migrations (SQLite)
+
+SQLite stores the app-side data (e.g., cache/mappings). To create tables:
+
+
+
+!!!!
+
+
+---
+
+## Security / networking notes
+
+- PostgreSQL should be reachable **only on the private network**
+- Open PostgreSQL port 5432 **only** to the API host private IP
+- Keep secrets and credentials in `.env` (do not commit it)
+
+---
