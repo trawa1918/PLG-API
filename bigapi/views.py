@@ -17,23 +17,21 @@ class PlayerSyncViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=["get"], url_path="sync")
     def sync(self, request):
-        bohemia_id = request.query_params.get("killer_bi_id")
-        if not bohemia_id:
+        killer_bi_id = request.query_params.get("killer_bi_id")
+        if not killer_bi_id:
             return Response({"detail": "killer_bi_id is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # read from BIG database
         big_row = (
             PlayerRecord.objects.using("big")
-            .filter(bohemia_id=bohemia_id)
+            .filter(killer_bi_id=killer_bi_id)
             .values()
             .first()
         )
         if not big_row:
             return Response({"detail": "Not found in big database"}, status=status.HTTP_404_NOT_FOUND)
 
-        # upsert into SQLite (default)
         obj, _created = LocalPlayer.objects.update_or_create(
-            bohemia_id=bohemia_id,
+            killer_bi_id=killer_bi_id,
             defaults={"big_payload": big_row},
         )
 
