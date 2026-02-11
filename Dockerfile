@@ -10,4 +10,9 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 
 COPY . /app
 
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 EXPOSE 9600
+
+ENTRYPOINT ["/entrypoint.sh"]

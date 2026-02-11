@@ -10,6 +10,7 @@ services:
       DJANGO_DEBUG: "${DJANGO_DEBUG:-1}"
 
       SQLITE_PATH: "/data/db.sqlite3"
+      DJANGO_SECRET_KEY_FILE: "/data/django_secret_key"
 
       BIG_DB_NAME: "${BIG_DB_NAME}"
       BIG_DB_USER: "${BIG_DB_USER}"
