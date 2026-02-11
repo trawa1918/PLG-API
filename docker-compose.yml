@@ -1,0 +1,32 @@
+services:
+  api:
+    build:
+      context: .
+    container_name: plg-api
+    env_file:
+      - .env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings
+      DJANGO_DEBUG: "${DJANGO_DEBUG:-1}"
+
+      SQLITE_PATH: "/data/db.sqlite3"
+
+      BIG_DB_NAME: "${BIG_DB_NAME}"
+      BIG_DB_USER: "${BIG_DB_USER}"
+      BIG_DB_PASSWORD: "${BIG_DB_PASSWORD}"
+      BIG_DB_HOST: "${BIG_DB_HOST}"
+      BIG_DB_PORT: "${BIG_DB_PORT:-5432}"
+      BIG_DB_SSLMODE: "${BIG_DB_SSLMODE:-prefer}"
+    ports:
+      - "${API_PORT:-8000}:8000"
+    volumes:
+      - sqlite_data:/data
+    command: >
+      sh -c "
+      python manage.py migrate &&
+      python manage.py runserver 0.0.0.0:8000
+      "
+    restart: unless-stopped
+
+volumes:
+  sqlite_data:

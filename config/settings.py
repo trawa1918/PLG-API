@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-g&g_@l!)=q+!6@-e0ugnwp21ohgkm&2@5j=%^^u95tfxgnnq&_'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DJANGO_DEBUG", "0") in ("1", "true", "True", "yes", "YES")
 
 ALLOWED_HOSTS = []
 
@@ -84,24 +84,18 @@ REST_FRAMEWORK = {
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",#django small db
-        "NAME": "small_app_db",
-        "USER": "app_user",
-        "PASSWORD": "app_password",
-        "HOST": "127.0.0.1",
-        "PORT": "5432",
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.environ.get("SQLITE_PATH", str(BASE_DIR / "db.sqlite3")),
     },
     "big": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "big_database",#nazwa podstawowej db
-        "USER": "big_ro_user",#user tylko dla odczytu
-        "PASSWORD": "big_ro_password",#do zapisania w .env
-        "HOST": "127.0.0.1",#host maszyny
-        "PORT": "5432",#port duzej db
+        "NAME": os.environ.get("BIG_DB_NAME", "big_database"),
+        "USER": os.environ.get("BIG_DB_USER", "big_ro_user"),
+        "PASSWORD": os.environ.get("BIG_DB_PASSWORD", ""),
+        "HOST": os.environ.get("BIG_DB_HOST", "127.0.0.1"),
+        "PORT": os.environ.get("BIG_DB_PORT", "5432"),
         "OPTIONS": {
-            # optional but sometimes helpful:
-            # "connect_timeout": 5,
-            # "sslmode": "prefer",
+            "sslmode": os.environ.get("BIG_DB_SSLMODE", "prefer"),
         },
     },
 }
