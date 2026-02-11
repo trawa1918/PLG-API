@@ -1,7 +1,7 @@
 services:
   api:
     build:
-      context: .
+      context: ..
     container_name: plg-api
     env_file:
       - .env
